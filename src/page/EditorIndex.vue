@@ -94,18 +94,18 @@
       codeEditor: CodeEditor
     },
     watch: {
-      files: function (oldValue, newValue) {
-        // TODO: 类型转换， 保存到localStorage
-        // localStorage.setItem('files', newValue);
+      files: {
+        handler: function (newValue) {
+          localStorage.setItem('files', JSON.stringify(newValue));
+        },
+        deep: true
       }
     },
     mounted() {
-      let files = localStorage.getItem('files');
-      console.log(files);
-      // TODO: 从localStorage取出，类型转换，初始化this.files
-      // this.files = JSON.parse(files);
-      if (this.files.length === 0) {
-        this.files.push('contract.sol');
+      let fileStr = localStorage.getItem('files');
+      this.files = JSON.parse(fileStr);
+      if (this.files == null || this.files.length === 0) {
+        this.files = ['contract.sol'];
       }
       let defaultFile = this.files[0];
       this.editorFileChange(defaultFile);
@@ -185,8 +185,8 @@
               return;
             }
           }
-          this.insteadValue(this.files, fileName, newFile);
-          this.insteadValue(this.fileTabs, fileName, newFile);
+          this.$set(this.files, this.files.indexOf(fileName), newFile);
+          this.$set(this.fileTabs, this.fileTabs.indexOf(fileName), newFile);
           this.editorTab = newFile;
           localStorage.setItem(newFile, localStorage.getItem(fileName));
           localStorage.removeItem(fileName);
@@ -255,10 +255,7 @@
         }
       },
       insteadValue(arr, oldValue, newValue) {
-        let index = arr.indexOf(oldValue);
-        if (index !== -1) {
-          arr[index] = newValue;
-        }
+        this.$set(arr, arr.indexOf(oldValue), newValue)
       }
     }
   }
