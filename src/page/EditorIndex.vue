@@ -87,7 +87,7 @@
         editorTab: '',
         compileFile: '',
         compiling: false,
-        compileResult: ''
+        compileResult: '123'
       }
     },
     components: {
@@ -133,7 +133,9 @@
           });
         } else {
           let code = localStorage.getItem(this.compileFile);
-          let result = compileContract(code);
+          compileContract(code).then(result => {
+            this.compileResult = result;
+          });
           this.$notify.success({
             title: '编译成功',
             message: '\"' + this.compileFile + '\"编译成功!'
@@ -253,9 +255,6 @@
             break;
           }
         }
-      },
-      insteadValue(arr, oldValue, newValue) {
-        this.$set(arr, arr.indexOf(oldValue), newValue)
       }
     }
   }
