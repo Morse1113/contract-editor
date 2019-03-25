@@ -50,23 +50,12 @@
           <code-editor ref="codeEditor"></code-editor>
         </el-main>
         <el-footer height="30%">
-          {{ compileResult }}
+          日志和输出
         </el-footer>
       </el-container>
     </el-main>
     <el-aside v-show="rightAside" class="right" width="380px">
-      <el-form :inline="true" class="compile-form">
-        <el-form-item>
-          <el-select v-model="compileFile" value="compiler" placeholder="请选择文件">
-            <el-option v-for="file in files"
-                       :key="file" :label="file" :value="file">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="compile" :loading="compiling">编译</el-button>
-        </el-form-item>
-      </el-form>
+      <contract-action :files="files" v-on:compileResult="compileResult"></contract-action>
     </el-aside>
   </el-container>
 </template>
@@ -74,7 +63,7 @@
 <script>
 
   import CodeEditor from '../components/CodeEditor'
-  import {compileContract} from "../../static/js/ContractCompile";
+  import ContractAction from '../components/ContractActions'
 
   export default {
     name: "EditorIndex",
@@ -85,13 +74,12 @@
         files: [],
         fileTabs: [],
         editorTab: '',
-        compileFile: '',
-        compiling: false,
-        compileResult: '123'
+        compileLoggers: ['hahhfahsdfh', 'adfhdsahfh']
       }
     },
     components: {
-      codeEditor: CodeEditor
+      codeEditor: CodeEditor,
+      contractAction: ContractAction
     },
     watch: {
       files: {
@@ -124,24 +112,13 @@
           type: 'success'
         });
       },
-      compile: function () {
-        this.compiling = true;
-        if (this.compileFile === '') {
-          this.$notify.error({
-            title: '操作失败',
-            message: '请选择正确的工程进行编译！'
-          });
-        } else {
-          let code = localStorage.getItem(this.compileFile);
-          compileContract(code).then(result => {
-            this.compileResult = result;
-          });
-          this.$notify.success({
-            title: '编译成功',
-            message: '\"' + this.compileFile + '\"编译成功!'
-          });
+      compileResult: function (result) {
+        const errors = result.errors;
+        if (errors !== undefined) {
+          for (let i = 0; i < errors.length; i++) {
+            // console.log(errors[i]);
+          }
         }
-        this.compiling = false;
       },
       addFile() {
         this.$prompt('请输入文件名（默认为.sol文件)', '提示', {
