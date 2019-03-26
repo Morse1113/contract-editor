@@ -56,14 +56,15 @@
               <el-button v-show="showLoggers" type="primary" icon="el-icon-delete" @click="compileLoggers = []"></el-button>
               <div style="float: right">
                 <i class="el-icon-download" v-show="showLoggers" @click="showLoggers = false, footerH='40px'"></i>
-                <i class="el-icon-upload2" v-show="!showLoggers" @click="showLoggers = true, footerH='30%'"></i>
+                <i class="el-icon-upload2" v-show="!showLoggers" @click="showLoggers = true, footerH='40%'"></i>
               </div>
             </el-header>
             <el-main class="logger-main" v-show="showLoggers">
-              <el-alert v-for="logger in compileLoggers"
+              <el-alert v-for="(logger, index) in compileLoggers"
                         :title="logger.message"
-                        :type="formatType(logger.type)"
+                        :type="logger.severity"
                         :description="logger.formattedMessage"
+                        :key="index"
                         show-icon
               >
               </el-alert>
@@ -90,7 +91,7 @@
         leftAside: true,
         rightAside: true,
         showLoggers: true,
-        footerH: '30%',
+        footerH: '40%',
         files: [],
         fileTabs: [],
         editorTab: '',
@@ -125,13 +126,6 @@
       }
     },
     methods: {
-      alertLang: function () {
-        this.$notify({
-          title: '当前语言',
-          message: this.lang,
-          type: 'success'
-        });
-      },
       compileResult: function (result) {
         const errors = result.errors;
         if (errors !== undefined) {
@@ -141,17 +135,8 @@
         } else {
           this.compileLoggers.push({
             message: 'compile success',
-            type: 'success'
+            severity: 'success'
           })
-        }
-      },
-      formatType(type) {
-        if (type === 'success') {
-          return 'success';
-        } else if (type === 'Warning') {
-          return 'warning';
-        } else {
-          return 'error';
         }
       },
       addFile() {
