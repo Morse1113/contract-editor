@@ -56,7 +56,7 @@
               <el-button v-show="showLoggers" type="primary" icon="el-icon-delete" @click="compileLoggers = []"></el-button>
               <div style="float: right">
                 <i class="el-icon-download" v-show="showLoggers" @click="showLoggers = false, footerH='40px'"></i>
-                <i class="el-icon-upload2" v-show="!showLoggers" @click="showLoggers = true, footerH='30%'"></i>
+                <i class="el-icon-upload2" v-show="!showLoggers" @click="showLoggers = true, footerH='40%'"></i>
               </div>
             </el-header>
             <el-main class="logger-main" v-show="showLoggers">
@@ -91,7 +91,7 @@
         leftAside: true,
         rightAside: true,
         showLoggers: true,
-        footerH: '30%',
+        footerH: '40%',
         files: [],
         fileTabs: [],
         editorTab: '',
