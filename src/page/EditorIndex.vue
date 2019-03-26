@@ -64,6 +64,7 @@
                         :title="logger.message"
                         :type="formatType(logger.type)"
                         :description="logger.formattedMessage"
+                        :key="logger.message"
                         show-icon
               >
               </el-alert>
@@ -125,13 +126,6 @@
       }
     },
     methods: {
-      alertLang: function () {
-        this.$notify({
-          title: '当前语言',
-          message: this.lang,
-          type: 'success'
-        });
-      },
       compileResult: function (result) {
         const errors = result.errors;
         if (errors !== undefined) {
