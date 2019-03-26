@@ -28,7 +28,7 @@
 
       <!--渲染ABI列表-->
 
-      <el-tree :data="contractsList" :props="defaultProps" @click="nodeClick"></el-tree>
+      <el-tree :data="contractsList" :props="defaultProps"></el-tree>
 
     </div>
 
@@ -137,9 +137,6 @@
           });
         }
         this.compiling = false;
-      },
-      nodeClick: function (data) {
-
       },
       deploy: function () {
         deployContract(this.compiledContracts[this.deployIndex]);
