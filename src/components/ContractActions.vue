@@ -28,7 +28,13 @@
 
       <!--渲染ABI列表-->
 
-      <el-tree :data="contractsList" :props="defaultProps"></el-tree>
+      <el-tree
+        node-key="id"
+        :default-expanded-keys=openIndex
+        :data="contractsList"
+      >
+
+      </el-tree>
 
     </div>
 
@@ -71,7 +77,8 @@
           label: 'label'
         },
         compiledContracts: [],
-        deployIndex: ''
+        deployIndex: '',
+        openIndex: []
       }
     },
     props: {
@@ -97,20 +104,22 @@
             if (result.contracts !== undefined) {
               this.contractsList = [];
               this.compiledContracts = [];
+              this.openIndex = [];
               const contractsFile = result.contracts[this.compileFile];
               // TODO: 解析contracts，渲染到页面
               let index = 0;
               for (let key in contractsFile) {
-                console.log(key, ":", contractsFile[key]);
                 this.contractsList.push({
+                  id: index,
                   label: 'Contract:' + key,
                   children: []
                 })
+                this.openIndex[index] = index;
                 for (let i = 0; i < contractsFile[key].abi.length; i++) {
                   let item = contractsFile[key].abi[i];
                   if (item.type !== '' && item.type === 'function') {
                     this.contractsList[index].children.push({
-                      label: item.name
+                      label: 'f():  ' + item.name
                     })
                   }
                 }
@@ -120,7 +129,6 @@
                 title: '编译成功',
                 message: '\"' + this.compileFile + '\"编译成功!'
               });
-              // let contractList = result.contracts[this.compileFile];
               Object.keys(contractsFile).forEach(key => {
                 this.compiledContracts.push({
                   name: key,
