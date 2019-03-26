@@ -27,6 +27,9 @@
       </el-form>
 
       <!--渲染ABI列表-->
+
+      <el-tree :data="contractsList" :props="defaultProps" @click="nodeClick"></el-tree>
+
     </div>
 
     <div v-show="activeMenu === '2'">
@@ -51,6 +54,11 @@
         compileFile: '',
         compiling: false,
         compileResult: '123',
+        contractsList: [],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        }
       }
     },
     props: {
@@ -74,9 +82,25 @@
           compileContract(code, this.compileFile).then(result => {
             console.log(result);
             if (result.contracts !== undefined) {
-              const contracts = result.contracts;
+              const contractsFile = result.contracts[this.compileFile];
               // TODO: 解析contracts，渲染到页面
-
+              let index = 0;
+              for (let key in contractsFile) {
+                console.log(key, ":", contractsFile[key]);
+                this.contractsList.push({
+                  label: 'Contract:' + key,
+                  children: []
+                })
+                for (let i = 0; i < contractsFile[key].abi.length; i++) {
+                  let item = contractsFile[key].abi[i];
+                  if (item.type !== '' && item.type === 'function') {
+                    this.contractsList[index].children.push({
+                      label: item.name
+                    })
+                  }
+                }
+                index++;
+              }
               this.$notify.success({
                 title: '编译成功',
                 message: '\"' + this.compileFile + '\"编译成功!'
@@ -91,6 +115,9 @@
           });
         }
         this.compiling = false;
+      },
+      nodeClick: function (data) {
+
       }
     }
   }
