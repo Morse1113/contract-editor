@@ -96,6 +96,7 @@
             console.log(result);
             if (result.contracts !== undefined) {
               this.contractsList = [];
+              this.compiledContracts = [];
               const contractsFile = result.contracts[this.compileFile];
               // TODO: 解析contracts，渲染到页面
               let index = 0;
@@ -119,11 +120,11 @@
                 title: '编译成功',
                 message: '\"' + this.compileFile + '\"编译成功!'
               });
-              let contractList = result.contracts[this.compileFile];
-              Object.keys(contractList).forEach(key => {
+              // let contractList = result.contracts[this.compileFile];
+              Object.keys(contractsFile).forEach(key => {
                 this.compiledContracts.push({
                   name: key,
-                  value: contractList[key]
+                  value: contractsFile[key]
                 });
               });
             } else {
