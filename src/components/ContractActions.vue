@@ -30,7 +30,18 @@
     </div>
 
     <div v-show="activeMenu === '2'">
-      部署
+      <el-form :inline="true" class="compile-form">
+        <el-form-item>
+          <el-select v-model="deployIndex" value="deploy" placeholder="请选择已编译的合约">
+            <el-option v-for="(contract, index) in compiledContracts"
+                       :key="index" :label="contract.name" :value="index">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="deploy">部署</el-button>
+        </el-form-item>
+      </el-form>
     </div>
 
     <div v-show="activeMenu === '3'">
@@ -41,7 +52,7 @@
 
 <script>
 
-  import {compileContract} from "../../static/js/ContractCompile";
+  import {compileContract, deployContract} from "../../static/js/ContractCompile";
 
   export default {
     name: "ContractActions",
@@ -51,6 +62,8 @@
         compileFile: '',
         compiling: false,
         compileResult: '123',
+        compiledContracts: [],
+        deployIndex: ''
       }
     },
     props: {
@@ -81,6 +94,13 @@
                 title: '编译成功',
                 message: '\"' + this.compileFile + '\"编译成功!'
               });
+              let contractList = contracts[this.compileFile];
+              Object.keys(contractList).forEach(key => {
+                this.compiledContracts.push({
+                  name: key,
+                  value: contractList[key]
+                });
+              });
             } else {
               this.$notify.error({
                 title: '编译失败',
@@ -91,6 +111,9 @@
           });
         }
         this.compiling = false;
+      },
+      deploy: function () {
+        deployContract(this.compiledContracts[this.deployIndex]);
       }
     }
   }

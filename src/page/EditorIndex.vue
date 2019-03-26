@@ -60,11 +60,11 @@
               </div>
             </el-header>
             <el-main class="logger-main" v-show="showLoggers">
-              <el-alert v-for="logger in compileLoggers"
+              <el-alert v-for="(logger, index) in compileLoggers"
                         :title="logger.message"
-                        :type="formatType(logger.type)"
+                        :type="logger.severity"
                         :description="logger.formattedMessage"
-                        :key="logger.message"
+                        :key="index"
                         show-icon
               >
               </el-alert>
@@ -135,17 +135,8 @@
         } else {
           this.compileLoggers.push({
             message: 'compile success',
-            type: 'success'
+            severity: 'success'
           })
-        }
-      },
-      formatType(type) {
-        if (type === 'success') {
-          return 'success';
-        } else if (type === 'Warning') {
-          return 'warning';
-        } else {
-          return 'error';
         }
       },
       addFile() {
