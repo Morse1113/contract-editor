@@ -49,8 +49,26 @@
         <el-main>
           <code-editor ref="codeEditor"></code-editor>
         </el-main>
-        <el-footer height="30%">
-          日志和输出
+        <el-footer :height="footerH">
+          <el-container>
+            <el-header class="logger-header" height="40px">
+              日志
+              <el-button v-show="showLoggers" type="primary" icon="el-icon-delete" @click="compileLoggers = []"></el-button>
+              <div style="float: right">
+                <i class="el-icon-download" v-show="showLoggers" @click="showLoggers = false, footerH='40px'"></i>
+                <i class="el-icon-upload2" v-show="!showLoggers" @click="showLoggers = true, footerH='30%'"></i>
+              </div>
+            </el-header>
+            <el-main class="logger-main" v-show="showLoggers">
+              <el-alert v-for="logger in compileLoggers"
+                        :title="logger.message"
+                        :type="formatType(logger.type)"
+                        :description="logger.formattedMessage"
+                        show-icon
+              >
+              </el-alert>
+            </el-main>
+          </el-container>
         </el-footer>
       </el-container>
     </el-main>
@@ -71,10 +89,12 @@
       return {
         leftAside: true,
         rightAside: true,
+        showLoggers: true,
+        footerH: '30%',
         files: [],
         fileTabs: [],
         editorTab: '',
-        compileLoggers: ['hahhfahsdfh', 'adfhdsahfh']
+        compileLoggers: []
       }
     },
     components: {
@@ -116,8 +136,22 @@
         const errors = result.errors;
         if (errors !== undefined) {
           for (let i = 0; i < errors.length; i++) {
-            // console.log(errors[i]);
+            this.compileLoggers.push(errors[i]);
           }
+        } else {
+          this.compileLoggers.push({
+            message: 'compile success',
+            type: 'success'
+          })
+        }
+      },
+      formatType(type) {
+        if (type === 'success') {
+          return 'success';
+        } else if (type === 'Warning') {
+          return 'warning';
+        } else {
+          return 'error';
         }
       },
       addFile() {
@@ -169,6 +203,11 @@
           this.editorTab = newFile;
           localStorage.setItem(newFile, localStorage.getItem(fileName));
           localStorage.removeItem(fileName);
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消修改'
+          });
         });
       },
       deleteFile(index) {
@@ -258,6 +297,25 @@
     background-color: #162a3c;
   }
 
+  .el-footer {
+    padding: 0;
+  }
+
+  .logger-header {
+    background-color: #3c3c3c;
+    color: white;
+    line-height: 40px;
+  }
+
+  .logger-main {
+    padding: 10px;
+    overflow: auto;
+  }
+
+  .el-alert {
+    margin: 0 0 10px 0;
+  }
+
   .el-tabs {
     margin-top: 19px;
   }
@@ -271,6 +329,20 @@
   .compile-form {
     text-align: center;
     margin-top: 120px;
+  }
+
+  /*控制整个滚动条*/
+  ::-webkit-scrollbar {
+    background-color: #333333;
+    width: 10px;
+    height: 10px;
+    background-clip: padding-box;
+  }
+
+  /*滚动条中间滑动部分*/
+  ::-webkit-scrollbar-thumb {
+    background-color: #1e1e1e;
+    border-radius: 5px;
   }
 </style>
 
