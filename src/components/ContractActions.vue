@@ -31,7 +31,7 @@
       <el-tree
         node-key="id"
         :default-expanded-keys=openIndex
-        :data="contractsList"
+        :data="treeData"
       >
 
       </el-tree>
@@ -71,11 +71,7 @@
         compileFile: '',
         compiling: false,
         compileResult: '123',
-        contractsList: [],
-        defaultProps: {
-          children: 'children',
-          label: 'label'
-        },
+        treeData: [],
         compiledContracts: [],
         deployIndex: '',
         openIndex: []
@@ -102,14 +98,14 @@
           compileContract(code, this.compileFile).then(result => {
             console.log(result);
             if (result.contracts !== undefined) {
-              this.contractsList = [];
+              this.treeData = [];
               this.compiledContracts = [];
               this.openIndex = [];
               const contractsFile = result.contracts[this.compileFile];
               // TODO: 解析contracts，渲染到页面
               let index = 0;
               for (let key in contractsFile) {
-                this.contractsList.push({
+                this.treeData.push({
                   id: index,
                   label: 'Contract:' + key,
                   children: []
@@ -118,7 +114,7 @@
                 for (let i = 0; i < contractsFile[key].abi.length; i++) {
                   let item = contractsFile[key].abi[i];
                   if (item.type !== '' && item.type === 'function') {
-                    this.contractsList[index].children.push({
+                    this.treeData[index].children.push({
                       label: 'f():  ' + item.name
                     })
                   }
