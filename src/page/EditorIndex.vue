@@ -52,12 +52,14 @@
         <el-footer :height="footerH">
           <el-container>
             <el-header class="logger-header" height="40px">
-              日志
-              <el-button v-show="showLoggers" type="primary" icon="el-icon-delete" @click="compileLoggers = []"></el-button>
-              <div style="float: right">
+              <div style="float: left">
                 <i class="el-icon-download" v-show="showLoggers" @click="showLoggers = false, footerH='40px'"></i>
                 <i class="el-icon-upload2" v-show="!showLoggers" @click="showLoggers = true, footerH='40%'"></i>
               </div>
+              <el-button v-show="showLoggers" type="primary"
+                         icon="el-icon-delete" @click="compileLoggers = []"
+                         style="float: right"
+              ></el-button>
             </el-header>
             <el-main class="logger-main" v-show="showLoggers">
               <el-alert v-for="(logger, index) in compileLoggers"
@@ -126,7 +128,7 @@
       }
     },
     methods: {
-      compileResult: function (result) {
+      compileResult: function (file, result) {
         const errors = result.errors;
         if (errors !== undefined) {
           for (let i = 0; i < errors.length; i++) {
@@ -134,7 +136,7 @@
           }
         } else {
           this.compileLoggers.push({
-            message: 'compile success',
+            message: file,
             severity: 'success'
           })
         }

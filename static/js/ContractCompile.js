@@ -25,7 +25,6 @@ export function compileContract (code, fileName = 'test.sol') {
 }
 
 export function deployContract(input) {
-  console.log(input);
   let contractName = input.name;
   let compileValue = input.value;
   if (!Web3.givenProvider) {
@@ -46,14 +45,9 @@ export function deployContract(input) {
       from: account,
       gas: 0,
       gasPrice: '4700000'
-    }).then((result) => {
-      console.log('result: ' + result)
-    }).catch(e => {
-      console.log('e: ' + e);
-    })
-
-
-
+    }, function (e, c) {
+      console.log(e, c);
+    });
   });
 }
 

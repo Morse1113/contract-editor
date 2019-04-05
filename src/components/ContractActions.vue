@@ -137,7 +137,7 @@
                 message: '\"' + this.compileFile + '\"编译失败!'
               });
             }
-            this.$emit('compileResult', result);
+            this.$emit('compileResult', this.compileFile, result);
           });
         }
         this.compiling = false;
