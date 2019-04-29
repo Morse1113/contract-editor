@@ -9,7 +9,6 @@
              active-text-color="#409EFF">
       <el-menu-item index="1">编译</el-menu-item>
       <el-menu-item index="2">部署</el-menu-item>
-      <el-menu-item index="3">运行</el-menu-item>
     </el-menu>
 
     <div v-show="activeMenu === '1'">
@@ -61,7 +60,7 @@
 
 <script>
 
-  import {compileContract, deployContract} from "../../static/js/ContractCompile";
+  import {compileContract, deployContract, getAddress} from "../../static/js/ContractCompile";
 
   export default {
     name: "ContractActions",
@@ -96,20 +95,18 @@
         } else {
           let code = localStorage.getItem(this.compileFile);
           compileContract(code, this.compileFile).then(result => {
-            console.log(result);
             if (result.contracts !== undefined) {
               this.treeData = [];
               this.compiledContracts = [];
               this.openIndex = [];
               const contractsFile = result.contracts[this.compileFile];
-              // TODO: 解析contracts，渲染到页面
               let index = 0;
               for (let key in contractsFile) {
                 this.treeData.push({
                   id: index,
                   label: 'Contract:' + key,
                   children: []
-                })
+                });
                 this.openIndex[index] = index;
                 for (let i = 0; i < contractsFile[key].abi.length; i++) {
                   let item = contractsFile[key].abi[i];
@@ -143,7 +140,13 @@
         this.compiling = false;
       },
       deploy: function () {
-        deployContract(this.compiledContracts[this.deployIndex]);
+        deployContract(this.compiledContracts[this.deployIndex]).catch(e => {
+          console.log(e);
+          this.$notify.error({
+            title: '插件异常',
+            message: '请先安装MetaMask并解锁您的钱包！'
+          });
+        });
       }
     }
   }
@@ -154,7 +157,7 @@
   @import "../styles/variable.less";
 
   .el-menu-item {
-    width: 33.3%;
+    width: 50%;
     text-align: center;
   }
 

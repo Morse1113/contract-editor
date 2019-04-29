@@ -27,18 +27,15 @@ export function compileContract (code, fileName = 'test.sol') {
 export function deployContract(input) {
   let contractName = input.name;
   let compileValue = input.value;
-  if (!Web3.givenProvider) {
-    this.$notify.error({
-      title: '插件异常',
-      message: '请先安装MetaMask并解锁您的钱包！'
-    });
-  }
   let web3 = new Web3(Web3.givenProvider);
-  web3.eth.getAccounts().then(value => {
+  return web3.eth.getAccounts().then(value => {
     const account = value[0];
+    if (account === undefined) {
+      throw new Error('插件异常');
+    }
     let contract = new web3.eth.Contract(compileValue.abi);
     let data = '0x' + compileValue.evm.bytecode.object;
-    contract.deploy({
+    return contract.deploy({
       data: data,
       name: contractName
     }).send({
@@ -46,7 +43,7 @@ export function deployContract(input) {
       gas: 0,
       gasPrice: '4700000'
     }, function (e, c) {
-      console.log(e, c);
+      console.log(c);
     });
   });
 }

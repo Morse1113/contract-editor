@@ -92,7 +92,7 @@
         </el-footer>
       </el-container>
     </el-main>
-    <el-aside v-show="rightAside" class="right" width="380px">
+    <el-aside v-show="rightAside" class="right" width="310px">
       <contract-action :files="compileNames" v-on:compileResult="compileResult"></contract-action>
     </el-aside>
   </el-container>
